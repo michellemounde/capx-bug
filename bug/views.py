@@ -1,10 +1,21 @@
-from django.http import HttpResponse
+from django.shortcuts import render
+
+from .forms import BugForm
 
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello, world. You're at the bug index.")
+    return render(request, "bug/index.html")
 
 
 def register_bug(request):
-    return HttpResponse("TODO - Add form here to register bugs!")
+    if request.method == "POST":
+        form = BugForm(request.POST)
+        if form.is_valid():
+            # TODO - Process data in form.cleaned_data by 1.Save in database
+            # TODO - Clear form
+            # TODO - Show success message or Redirect to a new url
+            return "success"
+    else:
+        form = BugForm()
+    return render(request, "bug/register.html", {"form": form})
