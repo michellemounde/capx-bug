@@ -4,9 +4,9 @@
 
 <nav>
     <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/register">Register a bug</a></li>
-        <li><a href="/bugs">View all bugs</a></li>
+        <li><a href="{% url 'bug:index' %}">Home</a></li>
+        <li><a href="{% url 'bug:register' %}">Register a bug</a></li>
+        <li><a href="{% url 'bug:bugs' %}">View all bugs</a></li>
     </ul>
 </nav>
 
