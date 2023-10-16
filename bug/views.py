@@ -1,6 +1,10 @@
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_list_or_404
+from django.urls import reverse
 
 from .forms import BugForm
+
+from .models import Bug
 
 
 # Create your views here.
@@ -12,15 +16,9 @@ def register_bug(request):
     if request.method == "POST":
         form = BugForm(request.POST)
         if form.is_valid():
-            # TODO - Process data in form.cleaned_data by 1.Save in database
-            # TODO - Clear form
-            # TODO - Show success message or Redirect to a new url
+            bug = Bug.objects.create_bug(**form.cleaned_data)
+            bug.save()
             return "success"
     else:
         form = BugForm()
     return render(request, "bug/register.html", {"form": form})
-
-
-def bugs(request):
-    # TODO
-    return render(request, "bug/bugs.html")
