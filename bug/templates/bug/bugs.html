@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>Bugs will show up here</p>
+
+<h2>Bugs</h2>
+
+{% if bugs %}
+    <ol>
+    {% for bug in bugs %}
+        <li>
+            {% comment %}TODO - Add href for detailed bug view for bug fields{% endcomment %}
+            <a href="#">{{ bug.description }}</a>
+        </li>
+    {% endfor %}
+    </ol>
+{% else %}
+    <p>No bugs are registered.</p>
+{% endif %}
+
 {% endblock content%}
