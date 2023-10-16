@@ -19,3 +19,8 @@ def register_bug(request):
     else:
         form = BugForm()
     return render(request, "bug/register.html", {"form": form})
+
+
+def bugs(request):
+    # TODO
+    return render(request, "bug/bugs.html")
