@@ -20,6 +20,7 @@ def register_bug(request):
         form = BugForm(request.POST)
         if form.is_valid():
             bug = Bug(**form.cleaned_data)
+            bug.full_clean()
             bug.save()
             return HttpResponseRedirect(reverse("bug:bugs"))
     else:
