@@ -1,5 +1,6 @@
 import datetime
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -34,3 +35,47 @@ class BugModelTests(TestCase):
         description = "Testing for was_reported_recently() on future dates"
         future_bug = Bug(description=description, bug_type="error", status="todo", report_date=time)
         self.assertIs(future_bug.was_reported_recently(), False)
+
+    def test_description_min_length(self):
+        """
+        description is a minimum length of 25
+        """
+        description = "A sentence with 24 chars"
+        short_desc_bug = Bug(description=description, bug_type="build", status="in testing")
+        self.assertEqual(len(description), 24)
+        with self.assertRaises(ValidationError):
+            short_desc_bug.full_clean()
+
+    def test_description_max_length(self):
+        """
+        description is a maximum length of 200
+        """
+        description = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
+                       "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                       "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut al.")
+        long_desc_bug = Bug(description=description, bug_type="build", status="in testing")
+        self.assertEqual(len(description), 201)
+        with self.assertRaises(ValidationError):
+            long_desc_bug.full_clean()
+
+    def test_bug_type_min_length(self):
+        """
+        bug_type is a minimum length of 4
+        """
+        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        bug_type = "etc"
+        short_bug_type_bug = Bug(description=description, bug_type=bug_type, status="in testing")
+        self.assertEqual(len(bug_type), 3)
+        with self.assertRaises(ValidationError):
+            short_bug_type_bug.full_clean()
+
+    def test_bug_type_max_length(self):
+        """
+        bug_type is a maximum length of 50
+        """
+        description = "The quick brown fox jumps over the lazy dog"
+        bug_type = "Lorem ipsum dolor sit amet, consectetur adipiscing."
+        long_bug_type_bug = Bug(description=description, bug_type=bug_type, status="in testing")
+        self.assertEqual(len(bug_type), 51)
+        with self.assertRaises(ValidationError):
+            long_bug_type_bug.full_clean()
