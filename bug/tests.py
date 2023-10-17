@@ -79,3 +79,25 @@ class BugModelTests(TestCase):
         self.assertEqual(len(bug_type), 51)
         with self.assertRaises(ValidationError):
             long_bug_type_bug.full_clean()
+
+    def test_status_min_length(self):
+        """
+        status is a minimum length of 4
+        """
+        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        status = "etc"
+        short_status_bug = Bug(description=description, bug_type="build", status=status)
+        self.assertEqual(len(status), 3)
+        with self.assertRaises(ValidationError):
+            short_status_bug.full_clean()
+
+    def test_status_max_length(self):
+        """
+        status is a maximum length of 50
+        """
+        description = "The quick brown fox jumps over the lazy dog"
+        status = "Lorem ipsum dolor sit amet, consectetur adipiscing."
+        long_status_bug = Bug(description=description, bug_type="build", status=status)
+        self.assertEqual(len(status), 51)
+        with self.assertRaises(ValidationError):
+            long_status_bug.full_clean()
