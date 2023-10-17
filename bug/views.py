@@ -36,7 +36,6 @@ class BugsView(generic.ListView):
         return Bug.objects.all()
 
 
-
 class DetailView(generic.DetailView):
     model = Bug
     template_name = "bug/detail.html"
