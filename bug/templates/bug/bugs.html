@@ -8,8 +8,7 @@
     <ol>
     {% for bug in bugs %}
         <li>
-            {% comment %}TODO - Add href for detailed bug view for bug fields{% endcomment %}
-            <a href="#">{{ bug.description }}</a>
+            <a href="{% url 'bug:detail' bug.id %}">{{ bug.description }}</a>
         </li>
     {% endfor %}
     </ol>
