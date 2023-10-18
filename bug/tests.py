@@ -114,6 +114,15 @@ class BugIndexViewTests(TestCase):
         self.assertContains(response, "Hello, world. You're at the bug index.")
 
 
+def create_bug(description, days, bug_type="new feature", status="todo"):
+    """
+    Create a bug with the given `description` and reported the given number of `days` offset to now
+    (negative for bugs reported in the past, positive for bugs with future report dates)
+    """
+    time = timezone.now() + datetime.timedelta(days=days)
+    return Bug.objects.create(description=description, bug_type=bug_type, status=status, report_date=time)
+
+
 class BugsListViewTests(TestCase):
     def test_no_bugs(self):
         """
@@ -129,9 +138,7 @@ class BugsListViewTests(TestCase):
         Bugs with a report_date in the past are displayed on the bugs page.
         """
         description = "This is a bug with a date in the past showing in the bugs list"
-        time = timezone.now() + datetime.timedelta(days=-30)
-        past_bug = Bug.objects.create(description=description, bug_type="new feature",
-                                      status="todo", report_date=time)
+        past_bug = create_bug(description=description, days=-30)
         response = self.client.get(reverse("bug:bugs"))
         self.assertQuerySetEqual(response.context["bugs_list"], [past_bug])
 
@@ -140,8 +147,29 @@ class BugsListViewTests(TestCase):
         Bugs with a report_date in the future aren't displayed on the bugs page.
         """
         description = "This is a bug with a date in the future not showing in the bugs list"
-        time = timezone.now() + datetime.timedelta(days=30)
-        Bug.objects.create(description=description, bug_type="new feature", status="todo", report_date=time)
+        create_bug(description=description, days=30)
         response = self.client.get(reverse("bug:bugs"))
         self.assertContains(response, "No bugs are registered.")
         self.assertQuerySetEqual(response.context["bugs_list"], [])
+
+    def test_future_bug_and_past_bug(self):
+        """
+        If both future and past bugs exist, only past bugs are displayed.
+        """
+        past_description = "This is a bug with a date in the past showing in the bugs list"
+        past_bug = create_bug(description=past_description, days=-30)
+        future_description = "This is a bug with a date in the future not showing in the bugs list"
+        create_bug(description=future_description, days=30)
+        response = self.client.get(reverse("bug:bugs"))
+        self.assertQuerySetEqual(response.context["bugs_list"], [past_bug])
+
+    def test_two_past_bugs(self):
+        """
+        The bugs page may display multiple questions.
+        """
+        past_description_1 = "This is a bug that is 30 days old"
+        past_bug_1 = create_bug(description=past_description_1, days=-30)
+        past_description_2 = "This is a bug that is 5 days old"
+        past_bug_2 = create_bug(description=past_description_2, days=-5)
+        response = self.client.get(reverse("bug:bugs"))
+        self.assertQuerySetEqual(response.context["bugs_list"], [past_bug_2, past_bug_1])
