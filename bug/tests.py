@@ -3,6 +3,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
+from django.urls import reverse
 
 from .models import Bug
 
@@ -62,8 +63,8 @@ class BugModelTests(TestCase):
         """
         bug_type is a minimum length of 4
         """
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        bug_type = "etc"
+        description = "This is a bug_type with 3 characters"
+        bug_type = "tri"
         short_bug_type_bug = Bug(description=description, bug_type=bug_type, status="in testing")
         self.assertEqual(len(bug_type), 3)
         with self.assertRaises(ValidationError):
@@ -73,8 +74,8 @@ class BugModelTests(TestCase):
         """
         bug_type is a maximum length of 50
         """
-        description = "The quick brown fox jumps over the lazy dog"
-        bug_type = "Lorem ipsum dolor sit amet, consectetur adipiscing."
+        description = "This is a bug_type with 51 characters"
+        bug_type = "Can you imagine this bug_type is 51 characters len?"
         long_bug_type_bug = Bug(description=description, bug_type=bug_type, status="in testing")
         self.assertEqual(len(bug_type), 51)
         with self.assertRaises(ValidationError):
@@ -84,8 +85,8 @@ class BugModelTests(TestCase):
         """
         status is a minimum length of 4
         """
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        status = "etc"
+        description = "This is a status with 3 characters"
+        status = "tri"
         short_status_bug = Bug(description=description, bug_type="build", status=status)
         self.assertEqual(len(status), 3)
         with self.assertRaises(ValidationError):
@@ -95,9 +96,52 @@ class BugModelTests(TestCase):
         """
         status is a maximum length of 50
         """
-        description = "The quick brown fox jumps over the lazy dog"
-        status = "Lorem ipsum dolor sit amet, consectetur adipiscing."
+        description = "This is a status with 51 characters"
+        status = "Can you imagine this status is 51 characters long??"
         long_status_bug = Bug(description=description, bug_type="build", status=status)
         self.assertEqual(len(status), 51)
         with self.assertRaises(ValidationError):
             long_status_bug.full_clean()
+
+
+class BugIndexViewTests(TestCase):
+    def test_welcome_message(self):
+        """
+        The welcome message is displayed on the index page
+        """
+        response = self.client.get(reverse("bug:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hello, world. You're at the bug index.")
+
+
+class BugsListViewTests(TestCase):
+    def test_no_bugs(self):
+        """
+        If no bugs exist, an appropriate message is displayed.
+        """
+        response = self.client.get(reverse("bug:bugs"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No bugs are registered.")
+        self.assertQuerySetEqual(response.context["bugs_list"], [])
+
+    def test_past_bug(self):
+        """
+        Bugs with a report_date in the past are displayed on the bugs page.
+        """
+        description = "This is a bug with a date in the past showing in the bugs list"
+        time = timezone.now() + datetime.timedelta(days=-30)
+        past_bug = Bug.objects.create(description=description, bug_type="new feature",
+                                      status="todo", report_date=time)
+        response = self.client.get(reverse("bug:bugs"))
+        self.assertQuerySetEqual(response.context["bugs_list"], [past_bug])
+
+    def test_future_bug(self):
+        """
+        Bugs with a report_date in the future aren't displayed on the bugs page.
+        """
+        description = "This is a bug with a date in the future not showing in the bugs list"
+        time = timezone.now() + datetime.timedelta(days=30)
+        Bug.objects.create(description=description, bug_type="new feature", status="todo", report_date=time)
+        response = self.client.get(reverse("bug:bugs"))
+        self.assertContains(response, "No bugs are registered.")
+        self.assertQuerySetEqual(response.context["bugs_list"], [])
