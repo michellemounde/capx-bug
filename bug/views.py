@@ -2,6 +2,7 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.urls import reverse
 from django.views import generic
 
@@ -19,7 +20,7 @@ def register_bug(request):
     if request.method == "POST":
         form = BugForm(request.POST)
         if form.is_valid():
-            bug = Bug(**form.cleaned_data)
+            bug = Bug.objects.create(**form.cleaned_data)
             bug.full_clean()
             bug.save()
             return HttpResponseRedirect(reverse("bug:bugs"))
@@ -34,7 +35,7 @@ class BugsView(generic.ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         """Return all the registered bugs"""
-        return Bug.objects.all()
+        return Bug.objects.filter(report_date__lte=timezone.now())
 
 
 class DetailView(generic.DetailView):
