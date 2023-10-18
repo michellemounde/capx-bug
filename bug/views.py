@@ -43,6 +43,12 @@ class DetailView(generic.DetailView):
     template_name = "bug/detail.html"
     context_object_name = "bug"
 
+    def get_queryset(self) -> QuerySet[Any]:
+        """
+        Excludes any bugs that aren't reported yet
+        """
+        return Bug.objects.filter(report_date__lte=timezone.now())
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         bug = context["bug"]
