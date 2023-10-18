@@ -35,7 +35,7 @@ class BugsView(generic.ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         """Return all the registered bugs"""
-        return Bug.objects.filter(report_date__lte=timezone.now())
+        return Bug.objects.filter(report_date__lte=timezone.now()).order_by("-report_date")
 
 
 class DetailView(generic.DetailView):
