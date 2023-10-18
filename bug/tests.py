@@ -173,3 +173,18 @@ class BugsListViewTests(TestCase):
         past_bug_2 = create_bug(description=past_description_2, days=-5)
         response = self.client.get(reverse("bug:bugs"))
         self.assertQuerySetEqual(response.context["bugs_list"], [past_bug_2, past_bug_1])
+
+
+class BugDetailViewTests(TestCase):
+    def test_future_bug(self):
+        future_description = "This is a bug with a date in the future not showing a detail view"
+        future_bug = create_bug(description=future_description, days=30)
+        response = self.client.get(reverse("bug:detail", args=(future_bug.id,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_past_bug(self):
+        past_description = "This is a bug with a date in the past showing in the deatil view"
+        past_bug = create_bug(description=past_description, days=-30)
+        response = self.client.get(reverse("bug:detail", args=(past_bug.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, past_bug.description)
