@@ -33,7 +33,6 @@ Before you begin, ensure you have met the following requirements:
 ## Installation
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/michellemounde/capx-bug.git
 
@@ -65,12 +64,12 @@ Before you begin, ensure you have met the following requirements:
    python manage.py migrate
 
 7. Create a superuser to have full control over the database:
-   ``` bash
+   ```bash
    python manage.py createsuperuser
 
 9. Start the development server:
    ```bash
-    python manage.py runserver
+   python manage.py runserver
 
 You should now be able to access the project at http://localhost:8000/ in your web browser.
 
@@ -120,6 +119,5 @@ Contributions are welcome! To contribute to Capacity Exchange (CapX) - Bug, foll
 ## Tests
 
 Run tests with the following command:
-
-    ```bash
-    python manage.py test bug
+   ```bash
+   python manage.py test bug
