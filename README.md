@@ -33,43 +33,49 @@ Before you begin, ensure you have met the following requirements:
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/michellemounde/capx-bug.git
+```bash
+git clone https://github.com/michellemounde/capx-bug.git
+```
 
 2. Navigate to the project directory:
-
-   ```bash
-   cd capx-bug
+```bash
+cd capx-bug
+```
 
 3. Create a virtual environment (optional but recommended):
-
-   ```bash
-   python -m venv venv
+```bash
+python -m venv venv
+```
 
 4. Activate the virtual environment:
-    * On Windows:
-   ```bash
-   venv\Scripts\activate
-   ```
-    * On macOS and Linux:
-   ```bash
-   source venv/bin/activate
+* On Windows:
+```bash
+venv\Scripts\activate
+```
+* On macOS and Linux:
+```bash
+source venv/bin/activate
+```
 
 5. Install project dependencies:
-   ```bash
-   pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 6. Create the database and apply migrations:
-   ```bash
-   python manage.py migrate
+```bash
+python manage.py migrate
+```
 
 7. Create a superuser to have full control over the database:
-   ```bash
-   python manage.py createsuperuser
+```bash
+python manage.py createsuperuser
+```
 
 9. Start the development server:
-   ```bash
-   python manage.py runserver
+```bash
+python manage.py runserver
+```
 
 You should now be able to access the project at http://localhost:8000/ in your web browser.
 
@@ -119,5 +125,6 @@ Contributions are welcome! To contribute to Capacity Exchange (CapX) - Bug, foll
 ## Tests
 
 Run tests with the following command:
-   ```bash
-   python manage.py test bug
+```bash
+python manage.py test bug
+```
