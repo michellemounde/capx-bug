@@ -52,5 +52,7 @@ class DetailView(generic.DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         bug = context["bug"]
-        context["fields"] = {field.name: getattr(bug, field.name) for field in bug._meta.get_fields()}
+        context["fields"] = {field.name:
+                             getattr(bug, f'get_{field.name}_display')() if hasattr(bug, f'get_{field.name}_display')
+                             else getattr(bug, field.name) for field in bug._meta.get_fields()}
         return context
