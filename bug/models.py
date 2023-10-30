@@ -42,7 +42,8 @@ class Bug(models.Model):
     TESTING = "TEST"
     RNA = "RNA"
     STAGING = "STAGE"
-    MERGING = "MERGE"
+    DEPLOYMENT = "DEPLOY"
+    DONE = "DONE"
     STATUS_CHOICES = [
         (TODO, "To-Do"),
         (PLANNING, "Planning"),
@@ -52,7 +53,8 @@ class Bug(models.Model):
         (TESTING, "Testing"),
         (RNA, "Review & Approval"),
         (STAGING, "Staging"),
-        (MERGING, "Merging"),
+        (DEPLOYMENT, "Deployment"),
+        (DONE, "Done"),
     ]
     description = models.TextField(validators=[MinLengthValidator(25), MaxLengthValidator(200)])
     bug_type = models.CharField(max_length=5, choices=BUG_TYPE_CHOICES)
